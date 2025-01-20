@@ -37,22 +37,37 @@
           </v-col>
         </v-row>
       </v-container>
+			<v-container>
+				<v-row>
+					<v-col
+						cols="12"
+						sm="6"
+					>
+						<v-textarea
+							append-icon="mdi-comment"
+							class="mx-2"
+							label="メッセージを送信する"
+							rows="1"
+							auto-grow
+						></v-textarea>
+					</v-col>
+				</v-row>
+			</v-container>
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-  // import { ref } from 'vue'
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
-  const cards = ['Today', 'Yesterday']
-  // const links = [
-  //   ['mdi-inbox-arrow-down', 'Inbox'],
-  //   ['mdi-send', 'Send'],
-  //   ['mdi-delete', 'Trash'],
-  //   ['mdi-alert-octagon', 'Spam'],
-  // ]
+  const cards = ['Today']
+	const user_id = ref('');
+	const route = useRoute();
 
-  // const drawer = ref(null)
+onMounted(() => {
+  user_id.value = route.query.user_id;
+});
 </script>
 
 <!-- <script>
