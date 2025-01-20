@@ -14,10 +14,10 @@
 
 <template>
   <div id="app">
-    <nav>
+    <!-- <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
-    </nav>
+    </nav> -->
 
     <v-app>
       <v-navigation-drawer v-model="drawer" app>
