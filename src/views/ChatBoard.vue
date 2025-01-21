@@ -1,15 +1,11 @@
 <script setup>
 import { onMounted, ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
+import { db } from '@/firebase/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const cards = ['Today'];
-const Messages = reactive([
-  { message: "hello1" },
-  { message: "hello2" },
-  { message: "hello3" },
-  { message: "hello4" },
-  { message: "hello5" },
-]);
+const Messages = reactive([]);
 const user_id = ref('');
 const messageInput = ref('');
 const route = useRoute();
@@ -25,8 +21,17 @@ const handleReset = () => {
   messageInput.value = '';
 };
 
-onMounted(() => {
-  user_id.value = route.query.user_id || 'unknown';
+onMounted(async () => {
+  try {
+    user_id.value = route.query.user_id || 'unknown';
+    const chatRef = collection(db, "chats");
+    const snapShot = await getDocs(chatRef);
+    snapShot.forEach((doc) => {
+      Messages.push(doc.data());
+    });
+  } catch (error) {
+    console.error("Firestoreのデータ取得に失敗しました:", error);
+  }
 });
 </script>
 
