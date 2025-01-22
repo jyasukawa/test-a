@@ -2,7 +2,7 @@
 import { onMounted, ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { db } from '@/firebase/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 
 const cards = ['Today'];
 const Messages = reactive([]);
@@ -10,12 +10,36 @@ const user_id = ref('');
 const messageInput = ref('');
 const route = useRoute();
 
-const handleSubmit = () => {
-	if (messageInput.value.trim() !== '') {
-    Messages.unshift({ message: messageInput.value });
-    messageInput.value = '';
+// const handleSubmit = () => {
+// 	if (messageInput.value.trim() !== '') {
+//     Messages.unshift({ message: messageInput.value });
+//     messageInput.value = '';
+//   }
+// };
+
+const handleSubmit = async () => {
+  if (messageInput.value.trim() !== '') {
+    const newMessage = { 
+      message: messageInput.value, 
+      timestamp: new Date(), 
+      user_id: user_id.value 
+    };
+
+    try {
+      // Firestoreにメッセージを保存
+      await addDoc(collection(db, "chats"), newMessage);
+      
+      // 保存が成功したらメッセージリストに追加
+      Messages.unshift(newMessage);
+      messageInput.value = '';
+    } catch (error) {
+      console.error("Firestoreへのメッセージ保存に失敗しました:", error);
+    }
   }
 };
+
+
+
 
 const handleReset = () => {
   messageInput.value = '';
