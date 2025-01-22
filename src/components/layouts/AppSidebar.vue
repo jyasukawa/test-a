@@ -3,10 +3,10 @@
     data: () => ({
       drawer: true, // 初期値を false に設定
       links: [
-        { icon: 'mdi-inbox-arrow-down', text: 'Inbox', to: '/inbox' },
-        { icon: 'mdi-send', text: 'Send', to: '/send' },
-        { icon: 'mdi-delete', text: 'Trash', to: '/trash' },
-        { icon: 'mdi-alert-octagon', text: 'Spam', to: '/spam' },
+        { icon: 'mdi-account-group', text: 'Friends', to: '/friends' },
+        // { icon: 'mdi-send', text: 'Send', to: '/send' },
+        // { icon: 'mdi-delete', text: 'Trash', to: '/trash' },
+        // { icon: 'mdi-alert-octagon', text: 'Spam', to: '/spam' },
       ],
     }),
   };
@@ -16,7 +16,7 @@
 	<v-navigation-drawer v-model="drawer" app>
 		<v-sheet class="pa-4" color="grey-lighten-4">
 			<v-avatar class="mb-4" color="grey-darken-1" size="64"></v-avatar>
-			<div>john@google.com</div>
+			<div>jack@google.com</div>
 		</v-sheet>
 
 		<v-divider></v-divider>

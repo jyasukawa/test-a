@@ -2,20 +2,13 @@
 import { onMounted, ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { db } from '@/firebase/firebase';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
 
 const cards = ['Today'];
 const Messages = reactive([]);
 const user_id = ref('');
 const messageInput = ref('');
 const route = useRoute();
-
-// const handleSubmit = () => {
-// 	if (messageInput.value.trim() !== '') {
-//     Messages.unshift({ message: messageInput.value });
-//     messageInput.value = '';
-//   }
-// };
 
 const handleSubmit = async () => {
   if (messageInput.value.trim() !== '') {
@@ -26,11 +19,8 @@ const handleSubmit = async () => {
     };
 
     try {
-      // Firestoreにメッセージを保存
-      await addDoc(collection(db, "chats"), newMessage);
-      
-      // 保存が成功したらメッセージリストに追加
-      Messages.unshift(newMessage);
+      const docRef = await addDoc(collection(db, "chats"), newMessage);
+      Messages.unshift({ ...newMessage, id: docRef.id }); // idを含める
       messageInput.value = '';
     } catch (error) {
       console.error("Firestoreへのメッセージ保存に失敗しました:", error);
@@ -38,8 +28,20 @@ const handleSubmit = async () => {
   }
 };
 
+const handleDelete = async (id) => {
+  try {
+    // Firestoreから該当メッセージを削除
+    await deleteDoc(doc(db, "chats", id));
 
-
+    // ローカルのメッセージリストから削除
+    const index = Messages.findIndex((msg) => msg.id === id);
+    if (index !== -1) {
+      Messages.splice(index, 1);
+    }
+  } catch (error) {
+    console.error("Firestoreからのメッセージ削除に失敗しました:", error);
+  }
+};
 
 const handleReset = () => {
   messageInput.value = '';
@@ -49,9 +51,12 @@ onMounted(async () => {
   try {
     user_id.value = route.query.user_id || 'unknown';
     const chatRef = collection(db, "chats");
-    const snapShot = await getDocs(chatRef);
+
+    // timestampで降順にソート
+    const chatQuery = query(chatRef, orderBy("timestamp", "desc"));
+    const snapShot = await getDocs(chatQuery);
     snapShot.forEach((doc) => {
-      Messages.push(doc.data());
+      Messages.push({ ...doc.data(), id: doc.id }); // doc.idを含める
     });
   } catch (error) {
     console.error("Firestoreのデータ取得に失敗しました:", error);
@@ -74,8 +79,12 @@ onMounted(async () => {
                     <template #prepend>
                       <v-avatar color="grey-darken-1"></v-avatar>
                     </template>
-
-                    <v-list-item-title class="message">{{ item.message }}</v-list-item-title>
+                    <div class="mcon">
+                      <v-list-item-title class="message">{{ item.message }}</v-list-item-title>
+                      <v-btn @click="handleDelete(item.id)" icon>
+                        <v-icon>mdi-delete</v-icon>
+                      </v-btn>
+                    </div>
                   </v-list-item>
 
                   <v-divider v-if="index !== Messages.length - 1" :key="`divider-${index}`" inset></v-divider>
@@ -109,6 +118,10 @@ onMounted(async () => {
 <style scoped>
 .message {
 	text-align: left;
+}
+
+.mcon {
+  display: flex;
 }
 
 .input-container {

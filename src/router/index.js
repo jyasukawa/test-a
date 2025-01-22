@@ -2,10 +2,16 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 // import HomeView from '../views/HomeView.vue'
 import UserList from '../views/UserList.vue'
 import ChatBoard from '../views/ChatBoard.vue'
+// import LoginView from '@/views/LoginView.vue'
 
 const routes = [
+  // {
+  //   path: '/',
+  //   name: 'LoginView',
+  //   component: LoginView
+  // },
   {
-    path: '/inbox',
+    path: '/friends',
     name: 'UserList',
     component: UserList
   },
