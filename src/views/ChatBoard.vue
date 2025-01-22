@@ -61,7 +61,6 @@ onMounted(async () => {
           </v-col>
         </v-row>
       </v-container>
-			<p>{{ Messages }}</p>
       <v-container class="input-container">
         <v-row>
           <v-col cols="12" sm="6">
